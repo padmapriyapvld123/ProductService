@@ -14,7 +14,7 @@ public class ProductTablePrimaryKey implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@PrimaryKeyColumn(name = "productid", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
+	@PrimaryKeyColumn(name = "productid")
 	@Column("productid")
 	private String productId;
 

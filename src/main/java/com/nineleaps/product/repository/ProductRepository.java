@@ -12,7 +12,7 @@ import com.nineleaps.product.entity.ProductTablePrimaryKey;
 import com.nineleaps.product.model.Product;
 
 @Repository
-public interface ProductRepository extends CrudRepository<ProductEntity,ProductTablePrimaryKey> {
+public interface ProductRepository extends CrudRepository<ProductEntity,String> {
 
 	
 }

@@ -26,11 +26,9 @@ public class ProductService {
 	}
 
 	public ProductEntity mapObjectToEntity(Product product) {
-		ProductTablePrimaryKey primaryKey = new ProductTablePrimaryKey();
-		primaryKey.setProductId(product.getProductId());
-	
+		
 		ProductEntity entity = new ProductEntity();
-		entity.setProductId(primaryKey.getProductId());
+		entity.setProductId(product.getProductId());
 		entity.setDescription(product.getDescription());
 		entity.setName(product.getName());
 		entity.setPrice(product.getPrice());
@@ -42,10 +40,8 @@ public class ProductService {
 	
 	public Product mapEntityToObject(ProductEntity entity) {
 		Product table = new Product();
-		ProductTablePrimaryKey primaryKey = new ProductTablePrimaryKey();
-		primaryKey.setProductId(entity.getProductId());
-	
-		table.setProductId(primaryKey.getProductId());
+		
+		table.setProductId(entity.getProductId());
 		table.setName(entity.getName());
 		table.setPrice(entity.getPrice());
 		table.setDescription(entity.getDescription());
@@ -54,9 +50,7 @@ public class ProductService {
 	}
 	
 	public Product fetchRecordFromProductTable(String id) throws NoContentException {
-		ProductTablePrimaryKey productTablePrimaryKey= new ProductTablePrimaryKey();
-		productTablePrimaryKey.setProductId(id);
-		Optional<ProductEntity> entity = productRepository.findById(productTablePrimaryKey);
+		Optional<ProductEntity> entity = productRepository.findById(id);
 		if(!entity.isPresent()) {
 			throw new NoContentException(HttpStatus.NO_CONTENT);
 		}

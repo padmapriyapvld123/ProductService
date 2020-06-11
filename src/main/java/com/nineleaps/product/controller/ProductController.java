@@ -57,9 +57,7 @@ public class ProductController {
 	
 	@PutMapping("/updateProduct/{id}")
 	public ResponseEntity<Product> updateProduct(@PathVariable("id") String productId, @RequestBody Product product) {
-		ProductTablePrimaryKey productTablePrimaryKey = new ProductTablePrimaryKey();
-		productTablePrimaryKey.setProductId(productId);
-		 Optional<ProductEntity> productData = productRepository.findById(productTablePrimaryKey);
+		 Optional<ProductEntity> productData = productRepository.findById(productId);
 
 	  if (productData.isPresent()) {
 		
@@ -73,10 +71,8 @@ public class ProductController {
 	public ResponseEntity<HttpStatus> deleteProduct(@PathVariable("id") String productId) {
 	  try {
 		
-		ProductTablePrimaryKey productTablePrimaryKey = new ProductTablePrimaryKey();
-		productTablePrimaryKey.setProductId(productId);
 			
-	    productRepository.deleteById(productTablePrimaryKey);
+	    productRepository.deleteById(productId);
 	    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	  } catch (Exception e) {
 	    return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
