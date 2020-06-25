@@ -54,7 +54,7 @@ public class ProductController {
 	@PostMapping("/save")
 	public ResponseEntity<?> saveIntoProductTable(@RequestBody Product product) {
 		
-		Supplier supplier = saveIfSupplierAvailable(product);
+		Supplier supplier = productService.saveIfSupplierAvailable(product);
 
 		if (supplier != null && supplier.getSupplierId() != null) {
 			return new ResponseEntity<>(productService.saveIntoProductTable(product), HttpStatus.OK);
@@ -70,13 +70,13 @@ public class ProductController {
 	@GetMapping(path = "{id}")
 	public ResponseEntity<?> fetchRecordFromProductTable(@PathVariable("id") String productId) {
 		Product productData = null;
-		ResponseEntity<?> responseEntity;
+		
 		try {
 			productData = productService.fetchRecordFromProductTable(productId);
 			
-			responseEntity =getIfSupplierAvailable(productData);
+			return productService.getIfSupplierAvailable(productData);
 			
-			return responseEntity;
+			
 
 			} catch (NoContentException e) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -84,28 +84,8 @@ public class ProductController {
 
 	}
 
-	private ResponseEntity<?> getIfSupplierAvailable(Product productData) {
-			
-		if (productData != null) {
-			Supplier supplier = proxy.checkSupplierAvailability(productData.getSupplierId());
-			if (supplier != null)
-				return new ResponseEntity<>(productData, HttpStatus.OK);
-			else
-
-				return new ResponseEntity<>("Supplier is not available.", HttpStatus.NOT_FOUND);
-
-		} else
-			return new ResponseEntity<>("Product not found by id.", HttpStatus.NOT_FOUND);
-
-		
-	}
 	
-	private Supplier saveIfSupplierAvailable(Product product) {
-		
-		Supplier supplier = proxy.checkSupplierAvailability(product.getSupplierId());
-		return supplier;
-		
-	}
+	
 
 	@PutMapping("/updateProduct/{id}")
 	public ResponseEntity<Product> updateProduct(@PathVariable("id") String productId, @RequestBody Product product) {

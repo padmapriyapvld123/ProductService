@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -29,6 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.nineleaps.product.controller.ProductController;
 import com.nineleaps.product.entity.ProductEntity;
 import com.nineleaps.product.model.Product;
+import com.nineleaps.product.model.Supplier;
 import com.nineleaps.product.repository.ProductRepository;
 import com.nineleaps.product.service.ProductService;
 
@@ -82,14 +84,15 @@ public class ProductServiceTest {
 	@Test
 	public void getProductById() throws Exception {
 		Product productResult = null;
-
+		
 		Product product = new Product("P001", "Table", 100.0, "Black Table", "test");
-
+		
+	
 		mockProductService = Mockito.mock(ProductService.class);
 
-		when(mockProductService.fetchRecordFromProductTable(product.getProductId())).thenReturn(product);
+		when(mockProductService.getIfSupplierAvailable(product)).thenReturn(new ResponseEntity(product, HttpStatus.OK));
 
-		productResult = mockProductService.fetchRecordFromProductTable(product.getProductId());
+		productResult = productService.fetchRecordFromProductTable(product.getProductId());
 
 		assertEquals(productResult.getSupplierId(), product.getSupplierId());
 	}
@@ -103,12 +106,22 @@ public class ProductServiceTest {
 				.andExpect(status().isOk()).andExpect(jsonPath("$[0].name").value(product.getName()));
 	}
 
-	// @Test
+	@Test
 	public void saveProduct() throws Exception {
 
-		mockMvc.perform(get("/product/save", "test").contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
+		Product productResult = null;
+		
+		Supplier supplier = new Supplier("test","test","test");
 
+		Product product = new Product("P001", "Table", 100.0, "Black Table", "test");
+
+		mockProductService = Mockito.mock(ProductService.class);
+
+		when(mockProductService.saveIfSupplierAvailable(product)).thenReturn(supplier);
+
+		productResult = productService.saveIntoProductTable(product);
+
+		assertEquals(productResult.getSupplierId(), product.getSupplierId());
 	}
 
 }
