@@ -1,28 +1,22 @@
 package com.nineleaps.product;
 
 import org.cassandraunit.spring.CassandraDataSet;
+
 import org.cassandraunit.spring.CassandraUnit;
-import org.cassandraunit.spring.CassandraUnitDependencyInjectionTestExecutionListener;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -39,22 +33,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(JUnitPlatform.class)
 @SpringBootTest({ "spring.data.cassandra.port=9042", "spring.data.cassandra.keyspace-name=cycling1" })
 @EnableAutoConfiguration
 @ComponentScan
 @ContextConfiguration
-//@TestExecutionListeners({ CassandraUnitDependencyInjectionTestExecutionListener.class,
-//    DependencyInjectionTestExecutionListener.class })
 @CassandraDataSet(value = { "cassandra-init.sh" }, keyspace = "cycling1")
 @CassandraUnit
 public class ProductServiceTest {
+
 
 	private MockMvc mockMvc;
 
@@ -72,7 +62,7 @@ public class ProductServiceTest {
 
 	private ProductService mockProductService = null;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		productController.setProductService(productService);
 
@@ -82,6 +72,7 @@ public class ProductServiceTest {
 	}
 
 	@Test
+	@DisplayName("getProductById")
 	public void getProductById() throws Exception {
 		Product productResult = null;
 		
@@ -98,7 +89,8 @@ public class ProductServiceTest {
 	}
 
 	@Test
-	public void givenAllProducts() throws Exception {
+	@DisplayName("getAllProducts")
+	public void getAllProducts() throws Exception {
 
 		ProductEntity product = new ProductEntity("P001", "Table", 100.0, "Black Table", "test");
 
@@ -107,6 +99,7 @@ public class ProductServiceTest {
 	}
 
 	@Test
+	@DisplayName("saveProduct")
 	public void saveProduct() throws Exception {
 
 		Product productResult = null;
