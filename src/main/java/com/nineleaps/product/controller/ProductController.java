@@ -2,6 +2,7 @@ package com.nineleaps.product.controller;
 
 import java.util.ArrayList;
 
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,8 +39,13 @@ public class ProductController {
 	private SupplierProxy proxy;
 
 
-	@Autowired
+	
 	private ProductService productService;
+	
+	@Autowired
+    public void setProductService(ProductService productService) {
+        this.productService = productService;
+    }
 
 	@Autowired
 	private ProductRepository productRepository;
@@ -47,37 +53,58 @@ public class ProductController {
 	
 	@PostMapping("/save")
 	public ResponseEntity<?> saveIntoProductTable(@RequestBody Product product) {
+		
+		Supplier supplier = saveIfSupplierAvailable(product);
 
-		Supplier supplier = proxy.checkSupplierAvailability(product.getSupplierId());
-		if (supplier!=null && supplier.getSupplierId() != null) {
+		if (supplier != null && supplier.getSupplierId() != null) {
 			return new ResponseEntity<>(productService.saveIntoProductTable(product), HttpStatus.OK);
 		} else {
 
 			return new ResponseEntity<>("Supplier Serivce Feign Exception", HttpStatus.NO_CONTENT);
 		}
 
+	
+		
 	}
 
 	@GetMapping(path = "{id}")
 	public ResponseEntity<?> fetchRecordFromProductTable(@PathVariable("id") String productId) {
 		Product productData = null;
+		ResponseEntity<?> responseEntity;
 		try {
 			productData = productService.fetchRecordFromProductTable(productId);
+			
+			responseEntity =getIfSupplierAvailable(productData);
+			
+			return responseEntity;
 
-			if (productData != null) {
-				Supplier supplier = proxy.checkSupplierAvailability(productData.getSupplierId());
-				if (supplier != null)
-					return new ResponseEntity<>(productData, HttpStatus.OK);
-				else
-
-					return new ResponseEntity<>("Supplier is not available.", HttpStatus.NOT_FOUND);
-
-			} else
-				return new ResponseEntity<>("Product not found by id.", HttpStatus.NOT_FOUND);
-		} catch (NoContentException e) {
+			} catch (NoContentException e) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 
+	}
+
+	private ResponseEntity<?> getIfSupplierAvailable(Product productData) {
+			
+		if (productData != null) {
+			Supplier supplier = proxy.checkSupplierAvailability(productData.getSupplierId());
+			if (supplier != null)
+				return new ResponseEntity<>(productData, HttpStatus.OK);
+			else
+
+				return new ResponseEntity<>("Supplier is not available.", HttpStatus.NOT_FOUND);
+
+		} else
+			return new ResponseEntity<>("Product not found by id.", HttpStatus.NOT_FOUND);
+
+		
+	}
+	
+	private Supplier saveIfSupplierAvailable(Product product) {
+		
+		Supplier supplier = proxy.checkSupplierAvailability(product.getSupplierId());
+		return supplier;
+		
 	}
 
 	@PutMapping("/updateProduct/{id}")
