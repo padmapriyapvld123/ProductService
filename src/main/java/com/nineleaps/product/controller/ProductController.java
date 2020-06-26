@@ -76,8 +76,6 @@ public class ProductController {
 			
 			return productService.getIfSupplierAvailable(productData);
 			
-			
-
 			} catch (NoContentException e) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
