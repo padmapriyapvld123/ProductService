@@ -17,7 +17,7 @@ import com.nineleaps.product.model.Supplier;
 @RibbonClient(name="supplier")
 public interface SupplierProxy {
 	
-	@GetMapping("/supplier/supplier/supplier/{id}")
+	@GetMapping("/supplier/supplier/{id}")
 	public Supplier checkSupplierAvailability( @PathVariable("id") String string);
 
 }
